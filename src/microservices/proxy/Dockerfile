@@ -1,11 +1,13 @@
-FROM eclipse-temurin:17-jdk
-
+FROM eclipse-temurin:17-jdk AS builder
 WORKDIR /app
+COPY gradlew ./
+COPY gradle ./gradle
+COPY build.gradle settings.gradle ./
+COPY src ./src
+RUN chmod +x ./gradlew && ./gradlew bootJar -x test
 
-COPY build/libs/proxy-0.0.1-SNAPSHOT.jar app.jar
-
-ENV PORT=8000
-
-EXPOSE ${PORT}
-
-CMD ["java", "-Dserver.port=${PORT}", "-jar", "/app/app.jar"]
+FROM eclipse-temurin:17-jdk
+VOLUME /tmp
+WORKDIR /
+COPY --from=builder /app/build/libs/*.jar /proxy-service.jar
+ENTRYPOINT ["java", "-jar", "/proxy-service.jar"]
