@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: monolith
-        image:  ghcr.io/db-exp/cinemaabysstest/monolith:latest
+        image: ghcr.io/unicum23/architecture-cinemaabyss/monolith:sha-df05b96
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
