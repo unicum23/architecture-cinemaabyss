@@ -1,4 +1,4 @@
-{{- if .Values.proxyService.enabled }}
+  {{- if .Values.proxyService.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24,8 +24,40 @@ spec:
         app: proxy-service
     spec:
       containers:
-      - name: proxy-service
-        ..... тут
+        - name: proxy-service
+          image: {{ .Values.proxyService.image.repository }}:{{ .Values.proxyService.image.tag }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PORT
+              value: "8000"
+            - name: EVENTS_SERVICE_URL
+              value: "http://events-service:8082"
+            - name: MONOLITH_URL
+              value: "http://monolith:8080"
+          envFrom:
+            - configMapRef:
+                name: cinemaabyss-config
+            - secretRef:
+                name: cinemaabyss-secrets
+          resources:
+            {{- toYaml .Values.proxyService.resources | nindent 10 }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: dockerconfigjson
 ---
 apiVersion: v1
 kind: Service
@@ -38,5 +70,9 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   selector:
-    ... и тут
-{{- end }}
+    app: proxy-service
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP
+    {{- end }}
