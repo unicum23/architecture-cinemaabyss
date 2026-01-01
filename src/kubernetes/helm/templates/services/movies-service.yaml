@@ -1,4 +1,4 @@
-{{- if .Values.moviesService.enabled }}
+  {{- if .Values.moviesService.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -73,4 +73,4 @@ spec:
   - port: {{ .Values.moviesService.service.port }}
     targetPort: {{ .Values.moviesService.service.targetPort }}
   type: {{ .Values.moviesService.service.type }}
-{{- end }}
+    {{- end }}

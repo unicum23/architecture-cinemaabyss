@@ -1,4 +1,4 @@
-{{- if .Values.monolith.enabled }}
+  {{- if .Values.monolith.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -73,4 +73,4 @@ spec:
   - port: {{ .Values.monolith.service.port }}
     targetPort: {{ .Values.monolith.service.targetPort }}
   type: {{ .Values.monolith.service.type }}
-{{- end }}
+    {{- end }}

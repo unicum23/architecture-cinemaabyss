@@ -24,35 +24,35 @@ spec:
         app: events-service
     spec:
       containers:
-        - name: events-service
-          image: {{ .Values.eventsService.image.repository }}:{{ .Values.eventsService.image.tag }}
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8082
-          env:
-            - name: PORT
-              value: "8082"
-            - name: KAFKA_BROKERS
-              value: "kafka:9092"
-          envFrom:
-            - configMapRef:
-                name: cinemaabyss-config
-            - secretRef:
-                name: cinemaabyss-secrets
-          resources:
-            {{- toYaml .Values.eventsService.resources | nindent 10 }}
-          readinessProbe:
-            httpGet:
-              path: /api/events/health
-              port: 8082
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /api/events/health
-              port: 8082
-            initialDelaySeconds: 15
-            periodSeconds: 20
+      - name: events-service
+        image: {{ .Values.eventsService.image.repository }}:{{ .Values.eventsService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8082
+        env:
+          - name: PORT
+            value: "8082"
+          - name: KAFKA_BROKERS
+            value: "kafka:9092"
+        envFrom:
+          - configMapRef:
+              name: cinemaabyss-config
+          - secretRef:
+              name: cinemaabyss-secrets
+        resources:
+          {{- toYaml .Values.eventsService.resources | nindent 10 }}
+        readinessProbe:
+          httpGet:
+            path: /api/events/health
+            port: 8082
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api/events/health
+            port: 8082
+          initialDelaySeconds: 15
+          periodSeconds: 20
       restartPolicy: Always
       imagePullSecrets:
         - name: dockerconfigjson
