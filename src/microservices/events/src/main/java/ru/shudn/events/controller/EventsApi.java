@@ -31,7 +31,7 @@ public class EventsApi {
     @PostMapping("/user")
     public ResponseEntity<Map<String, Object>> createUserEvent(@RequestBody UserDto model) {
 
-        String key = Objects.requireNonNullElse(model.id(), UUID.randomUUID().toString());
+        String key = Objects.requireNonNullElse(model.userId(), UUID.randomUUID().toString());
         producer.sendUserEvent(key, model);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
@@ -42,7 +42,7 @@ public class EventsApi {
 
     @PostMapping("/payment")
     public ResponseEntity<Map<String, Object>> createPaymentEvent(@RequestBody PaymentDto model) {
-        String key = Objects.requireNonNullElse(model.id(), UUID.randomUUID().toString());
+        String key = Objects.requireNonNullElse(model.paymentId(), UUID.randomUUID().toString());
         producer.sendPaymentEvent(key, model);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
@@ -53,7 +53,7 @@ public class EventsApi {
 
     @PostMapping("/movie")
     public ResponseEntity<Map<String, Object>> createMovieEvent(@RequestBody MovieDto model) {
-        String key = Objects.requireNonNullElse(model.id(), UUID.randomUUID().toString());
+        String key = Objects.requireNonNullElse(model.movieId(), UUID.randomUUID().toString());
         producer.sendMovieEvent(key, model);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
