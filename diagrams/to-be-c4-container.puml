@@ -1,0 +1,63 @@
+@startuml Container Diagram
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(end_user, "Клиент", "Использует медиасервис через браузер, смартфон или ТВ")
+
+System_Boundary(media_ecosystem, "Цифровая медиаплатформа «Кинобездна»") {
+
+    Container(entrypoint_api, "Traffic Gateway", "Kong", "Маршрутизация и контроль всех входящих запросов")
+
+    Container(security_core, "Access Control Service", "Go", "Проверка личности, токены доступа и сессии")
+    Container(account_core, "Account Management Service", "Go", "Хранение и изменение пользовательских параметров")
+    Container(asset_core, "Media Asset Service", "Go", "Операции с каталогом видео и описательной информацией")
+    Container(payment_core, "Payment Service", "Go", "Финансовая модель, тарифы и транзакции")
+    Container(personalization_core, "Personalization Engine", "Go", "Анализ поведения и формирование персональных витрин")
+    Container(messaging_core, "User Messaging Service", "Go", "Отправка сообщений и системных оповещений")
+    Container(incentive_core, "Incentive Program Service", "Go", "Начисление бонусов и применение поощрений")
+
+    ContainerDb(identity_storage, "Identity Storage", "PostgreTCP", "Учетные записи и связанные данные клиентов")
+    ContainerDb(asset_storage, "Media Storage", "PostgreTCP", "Структурированные сведения о медиаматериалах")
+    ContainerDb(finance_storage, "Finance Storage", "PostgreTCP", "Финансовые события и состояние подписок")
+
+    Container(event_bus, "Event Bus", "Apache Kafka", "Передача доменных событий между компонентами")
+
+    Container(browser_ui, "Browser Frontend", "React", "Клиентский интерфейс для настольных устройств")
+    Container(mobile_ui, "Mobile Frontend", "React Native", "Нативный интерфейс для мобильных платформ")
+    Container(tv_ui, "TV Frontend", "React", "Интерфейс для телевизионных устройств")
+}
+
+System_Ext(third_party_ai, "AI Recommendation Vendor", "Внешний сервис интеллектуальных рекомендаций")
+System_Ext(fintech_networks, "Financial Networks", "Платежные шлюзы и банки")
+System_Ext(content_partners, "Content Syndication Partners", "Источники медиаматериалов")
+
+Rel(end_user, browser_ui, "HTTPS")
+Rel(end_user, mobile_ui, "HTTPS")
+Rel(end_user, tv_ui, "HTTPS")
+
+Rel(entrypoint_api, security_core, "REST")
+Rel(entrypoint_api, account_core, "REST")
+Rel(entrypoint_api, asset_core, "REST")
+Rel(entrypoint_api, payment_core, "REST")
+Rel(entrypoint_api, personalization_core, "REST")
+Rel(entrypoint_api, incentive_core, "REST")
+
+Rel(security_core, identity_storage, "TCP")
+Rel(account_core, identity_storage, "TCP")
+Rel(asset_core, asset_storage, "TCP")
+Rel(payment_core, finance_storage, "TCP")
+
+Rel(asset_core, event_bus, "Event emission")
+Rel(personalization_core, event_bus, "Event consumption")
+Rel(messaging_core, event_bus, "Event consumption")
+Rel(incentive_core, event_bus, "Event consumption")
+
+Rel(personalization_core, third_party_ai, "HTTPS")
+Rel(payment_core, fintech_networks, "HTTPS")
+Rel(asset_core, content_partners, "HTTPS")
+
+Rel(browser_ui, entrypoint_api, "HTTPS")
+Rel(mobile_ui, entrypoint_api, "HTTPS")
+Rel(tv_ui, entrypoint_api, "HTTPS")
+
+@enduml
