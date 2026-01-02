@@ -3,10 +3,13 @@ name: Docker Build and Push
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, cinema ]
     paths:
       - 'src/**'
+      - 'tests/**'
+      - 'docker-compose.yml'
       - '.github/workflows/docker-build-push.yml'
+      - '.github/workflows/api-tests.yml'
   release:
     types: [ published ]
 
@@ -54,6 +57,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./src/monolith
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta-monolith.outputs.tags }}
           labels: ${{ steps.meta-monolith.outputs.labels }}
@@ -76,6 +80,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./src/microservices/movies
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta-movies.outputs.tags }}
           labels: ${{ steps.meta-movies.outputs.labels }}
@@ -98,6 +103,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./src/microservices/events
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta-events.outputs.tags }}
           labels: ${{ steps.meta-events.outputs.labels }}
@@ -120,6 +126,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./src/microservices/proxy
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta-proxy.outputs.tags }}
           labels: ${{ steps.meta-proxy.outputs.labels }}
